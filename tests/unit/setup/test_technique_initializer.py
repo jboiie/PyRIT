@@ -649,6 +649,29 @@ class TestGoatTechnique:
         assert "Refusal Suppression" in rendered
         assert "next_message" in rendered
 
+    def test_topic_splitting_matches_paper_definition(self):
+        """GOAT's Topic Splitting (paper section 3.1 / Table 1) mixes the objective in
+        among unrelated safe requests within one message -- it is not cross-turn
+        decomposition of the objective into sub-questions."""
+        sp = SeedPrompt.from_yaml_file(EXECUTOR_RED_TEAM_PATH / "goat.yaml")
+        rendered = sp.render_template_value(objective="UNIQUE_TEST_OBJECTIVE")
+        assert "Topic Splitting" in rendered
+        assert "unrelated" in rendered.lower()
+        assert "sub-questions" not in rendered.lower()
+
+    def test_effective_schema_is_reasoning_first(self):
+        """The factory's resolved adversarial system prompt must use a schema where
+        last_response_summary and rationale precede next_message, so a non-reasoning
+        model (whose structured-output API emits fields in schema order) reasons
+        about strategy before writing the message -- matching GOAT section 3.2."""
+        factory = self._goat_factory()
+        effective_schema = factory._adversarial_system_prompt.response_json_schema
+        assert list(effective_schema["properties"].keys()) == [
+            "last_response_summary",
+            "rationale",
+            "next_message",
+        ]
+
     async def test_registered_when_extra_selected(self, mock_adversarial_target):
         init = TechniqueInitializer()
         init.params = {"tags": ["extra"]}
