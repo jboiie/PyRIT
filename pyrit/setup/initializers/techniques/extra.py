@@ -81,6 +81,19 @@ def get_technique_factories() -> list[AttackTechniqueFactory]:
             ),
         ),
         AttackTechniqueFactory(
+            name="goat",
+            attack_class=RedTeamingAttack,
+            description=(
+                "Generative Offensive Agent Tester (GOAT): an attacker that observes the "
+                "defender's last response and picks strategies from a fixed taxonomy "
+                "(refusal suppression, persona modification, hypothetical framing, and more) "
+                "each turn. See https://arxiv.org/abs/2410.01606."
+            ),
+            technique_tags=["multi_turn"],
+            attack_kwargs={"max_turns": 5},
+            adversarial_system_prompt=SeedPrompt.from_yaml_file(EXECUTOR_RED_TEAM_PATH / "goat.yaml"),
+        ),
+        AttackTechniqueFactory(
             name="split_payload",
             attack_class=CrescendoAttack,
             description="Splits the objective across an escalating conversation to conceal the complete request.",

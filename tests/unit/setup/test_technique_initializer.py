@@ -48,7 +48,7 @@ CORE_TECHNIQUE_NAMES: list[str] = [
     "flip",
 ]
 
-EXTRA_TECHNIQUE_NAMES: list[str] = ["pair", "skeleton_key", "best_of_n", "violent_durian", "split_payload"]
+EXTRA_TECHNIQUE_NAMES: list[str] = ["pair", "skeleton_key", "best_of_n", "violent_durian", "goat", "split_payload"]
 
 PERSONA_CRESCENDO_TECHNIQUE_NAMES: list[str] = [
     "crescendo_movie_director",
@@ -605,6 +605,56 @@ class TestViolentDurianTechnique:
         await init.initialize_async()
 
         assert "violent_durian" in set(AttackTechniqueRegistry.get_registry_singleton().instances.get_names())
+
+
+# ---------------------------------------------------------------------------
+# GOAT (opt-in extra technique)
+# ---------------------------------------------------------------------------
+
+
+class TestGoatTechnique:
+    """Tests for the opt-in goat entry in the extra catalog."""
+
+    @staticmethod
+    def _goat_factory():
+        return next(f for f in build_technique_factories(groups=["extra"]) if f.name == "goat")
+
+    def test_in_extra_catalog(self):
+        names = {f.name for f in build_technique_factories(groups=["extra"])}
+        assert "goat" in names
+
+    def test_tagged_extra_not_core_or_default(self):
+        factory = self._goat_factory()
+        assert "core" not in factory.technique_tags
+        assert "default" not in factory.technique_tags
+        assert set(factory.technique_tags) == {"multi_turn", "extra"}
+
+    def test_uses_red_teaming_attack_with_adversarial(self):
+        factory = self._goat_factory()
+        assert factory.attack_class is RedTeamingAttack
+        assert factory.uses_adversarial is True
+
+    def test_has_max_turns_five(self):
+        factory = self._goat_factory()
+        assert factory._attack_kwargs == {"max_turns": 5}
+
+    def test_data_path_resolves_to_file(self):
+        assert (EXECUTOR_RED_TEAM_PATH / "goat.yaml").exists()
+
+    def test_system_prompt_yaml_renders_objective_and_strategies(self):
+        sp = SeedPrompt.from_yaml_file(EXECUTOR_RED_TEAM_PATH / "goat.yaml")
+        assert sp.parameters == ["objective"]
+        rendered = sp.render_template_value(objective="UNIQUE_TEST_OBJECTIVE")
+        assert "UNIQUE_TEST_OBJECTIVE" in rendered
+        assert "Refusal Suppression" in rendered
+        assert "next_message" in rendered
+
+    async def test_registered_when_extra_selected(self, mock_adversarial_target):
+        init = TechniqueInitializer()
+        init.params = {"tags": ["extra"]}
+        await init.initialize_async()
+
+        assert "goat" in set(AttackTechniqueRegistry.get_registry_singleton().instances.get_names())
 
 
 # ---------------------------------------------------------------------------
