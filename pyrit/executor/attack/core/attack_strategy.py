@@ -705,7 +705,7 @@ class AttackStrategy(Strategy[AttackStrategyContextT, AttackStrategyResultT], Id
             adversarial_system_prompt = self._extract_adversarial_prompt_text(adversarial_config.system_prompt)
             adversarial_seed_prompt = self._extract_adversarial_prompt_text(adversarial_config.first_message)
             adversarial_prompt_template = self._extract_adversarial_prompt_text(
-                getattr(adversarial_config, "adversarial_prompt_template", None)
+                adversarial_config.adversarial_prompt_template
             )
 
         # Add request converter identifiers if present

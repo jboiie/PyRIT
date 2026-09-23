@@ -989,6 +989,22 @@ class TestCustomAdversarialPrompt:
         )
         assert config.adversarial_prompt_template == "baked {{ feedback_text }}"
 
+    def test_baked_empty_string_prompt_template_still_takes_precedence(self):
+        """Precedence must use an explicit None check, not truthiness: a deliberately-baked
+        empty-string template (suppressing the default per-turn text) must still win over a
+        create-time value, the same as any other baked template."""
+        factory = AttackTechniqueFactory(
+            name="durian",
+            attack_class=self._AdversarialAttack,
+            adversarial_system_prompt="sys {{ objective }}",
+            adversarial_prompt_template="",
+        )
+        config = factory._build_adversarial_config(
+            create_time_target=MagicMock(spec=PromptTarget),
+            create_time_prompt_template="ignored {{ feedback_text }}",
+        )
+        assert config.adversarial_prompt_template == ""
+
     def test_create_prompt_template_conflicts_with_baked_raises(self):
         """create() must not supply adversarial_prompt_template when the factory baked one."""
         factory = AttackTechniqueFactory(

@@ -731,7 +731,11 @@ class AttackTechniqueFactory(Identifiable):
 
         system_prompt = self._adversarial_system_prompt or create_time_system_prompt
         seed_prompt = self._adversarial_seed_prompt or create_time_seed_prompt
-        prompt_template = self._adversarial_prompt_template or create_time_prompt_template
+        prompt_template = (
+            self._adversarial_prompt_template
+            if self._adversarial_prompt_template is not None
+            else create_time_prompt_template
+        )
 
         config_kwargs: dict[str, Any] = {"target": target}
         if system_prompt is not None:
