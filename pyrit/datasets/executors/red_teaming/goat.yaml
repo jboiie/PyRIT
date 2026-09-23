@@ -6,13 +6,15 @@ description: |
   new one:
 
   1. Judging and stopping condition. GOAT's own attacker loop is judge-free during generation --
-     it runs a fixed number of turns (the paper caps at 5) and only scores success afterward,
-     with a separate judge over the whole transcript (paper section 4 "Attack Hyperparameters",
-     section 5 "Overall Results", Figure 1 caption). RedTeamingAttack instead calls its
-     objective_scorer every turn and stops early once the objective is met. This technique keeps
-     RedTeamingAttack's per-turn judging and early stopping rather than reproducing GOAT's
-     fixed-turn, judge-free loop, since that is existing, already-tested PyRIT behavior and
-     changing it would mean a new executor.
+     it runs a fixed number of turns (the paper caps at 5), then a separate judge scores each
+     individual defender response against the objective afterward, and the conversation counts as
+     a success if any single response was flagged (paper section 4 "Attack Hyperparameters" and
+     "Scoring Setup", section 5 "Overall Results", Figure 1 caption). This is per-response judging
+     after the fact, not one holistic transcript verdict and not final-turn-only scoring.
+     RedTeamingAttack instead calls its objective_scorer every turn and stops early once the
+     objective is met. This technique keeps RedTeamingAttack's per-turn judging and early stopping
+     rather than reproducing GOAT's fixed-turn, judge-free loop, since that is existing,
+     already-tested PyRIT behavior and changing it would mean a new executor.
   2. Judge feedback. RedTeamingAttack's AttackScoringConfig.use_score_as_feedback defaults to
      True, so the objective judge's rationale is appended to the feedback the attacker sees each
      turn. GOAT's own Chain-of-Attack-Thought loop (paper section 3.3) never sees judge output --
