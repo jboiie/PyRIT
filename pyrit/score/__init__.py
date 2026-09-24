@@ -78,6 +78,7 @@ if TYPE_CHECKING:
     from pyrit.score.true_false.decoding_scorer import DecodingScorer
     from pyrit.score.true_false.float_scale_threshold_scorer import FloatScaleThresholdScorer
     from pyrit.score.true_false.gandalf_scorer import GandalfScorer
+    from pyrit.score.true_false.garak_exploitation_scorer import GarakExploitationDetector, GarakExploitationScorer
     from pyrit.score.true_false.llamaguard_parser import LLAMAGUARD_3_CATEGORY_CODES, parse_llamaguard_response
     from pyrit.score.true_false.llamaguard_policy import LlamaGuardCategory, LlamaGuardPolicy
     from pyrit.score.true_false.llamaguard_scorer import (
@@ -89,6 +90,7 @@ if TYPE_CHECKING:
     from pyrit.score.true_false.otel_tool_call_scorer import OtelToolCallScorer
     from pyrit.score.true_false.prompt_shield_scorer import PromptShieldScorer
     from pyrit.score.true_false.question_answer_scorer import QuestionAnswerScorer
+    from pyrit.score.true_false.regex.agent_threat_rules_scorer import AgentThreatRulesScorer
     from pyrit.score.true_false.regex.ansi_escape_output_scorer import AnsiEscapeOutputScorer
     from pyrit.score.true_false.regex.anthrax_keyword_scorer import AnthraxKeywordScorer
     from pyrit.score.true_false.regex.credential_leak_scorer import CredentialLeakScorer
@@ -156,6 +158,7 @@ _LAZY_EXPORTS: dict[str, str | tuple[str, str | None]] = {
     "ContentClassifierCategory": "pyrit.score.true_false.self_ask_category_scorer",
     "ContentClassifierPaths": "pyrit.score.true_false.self_ask_category_scorer",
     "ConversationScorer": "pyrit.score.conversation_scorer",
+    "AgentThreatRulesScorer": "pyrit.score.true_false.regex.agent_threat_rules_scorer",
     "CredentialLeakScorer": "pyrit.score.true_false.regex.credential_leak_scorer",
     "DecodingScorer": "pyrit.score.true_false.decoding_scorer",
     "DivergenceScorer": "pyrit.score.true_false.regex.divergence_scorer",
@@ -170,6 +173,8 @@ _LAZY_EXPORTS: dict[str, str | tuple[str, str | None]] = {
     "MessageTrueFalseScorer": "pyrit.score.true_false.true_false_scorer",
     "FloatScaleThresholdScorer": "pyrit.score.true_false.float_scale_threshold_scorer",
     "GandalfScorer": "pyrit.score.true_false.gandalf_scorer",
+    "GarakExploitationDetector": "pyrit.score.true_false.garak_exploitation_scorer",
+    "GarakExploitationScorer": "pyrit.score.true_false.garak_exploitation_scorer",
     "HarmHumanLabeledEntry": "pyrit.score.scorer_evaluation.human_labeled_dataset",
     "HarmScorerEvaluator": "pyrit.score.scorer_evaluation.scorer_evaluator",
     "HarmScorerMetrics": "pyrit.score.scorer_evaluation.scorer_metrics",
